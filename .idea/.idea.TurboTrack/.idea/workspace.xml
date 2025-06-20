@@ -9,6 +9,9 @@
     <projectFile>Intermediate/ProjectFiles/TurboTrack.vcxproj</projectFile>
     <projectFile>Intermediate/ProjectFiles/UE5.vcxproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="cea62e13-a76d-42cf-adac-f052f80846ad" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,16 +30,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ Project.TurboTrack.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ Project.TurboTrack.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ Project.TurboTrack">
     <configuration name="TurboTrack" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -166,6 +173,9 @@
       <updated>1750417030987</updated>
       <workItem from="1750417032754" duration="220000" />
       <workItem from="1750417458438" duration="266000" />
+      <workItem from="1750422313227" duration="1249000" />
+      <workItem from="1750428862825" duration="4356000" />
+      <workItem from="1750433342778" duration="113000" />
     </task>
     <servers />
   </component>
