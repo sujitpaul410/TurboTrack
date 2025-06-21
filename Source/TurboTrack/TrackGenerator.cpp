@@ -24,48 +24,59 @@ void ATrackGenerator::OnConstruction(const FTransform& Transform)
 	{
 		return;
 	}
-	TArray<USplineMeshComponent*> Meshes;
-	GetComponents(Meshes);
 
-	for (USplineMeshComponent* mesh : Meshes)
+	// Reusing previously stored components
+	if (PooledSplineMeshes.Num() == 0)
 	{
-		mesh->DestroyComponent();
+		GetComponents(PooledSplineMeshes); // Only once
 	}
-	
-	for (int SplineCount = 0; SplineCount < (SplineComponent->GetNumberOfSplinePoints() - 1); SplineCount++)
+
+	const int RequiredCount = SplineComponent->GetNumberOfSplinePoints() - 1;
+
+	// Ensuring we have enough pooled mesh components
+	while (PooledSplineMeshes.Num() < RequiredCount)
 	{
-		USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("Creating Spline Meshes"));
+		USplineMeshComponent* NewSplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+		NewSplineMesh->SetMobility(EComponentMobility::Movable);
+		NewSplineMesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+		NewSplineMesh->RegisterComponentWithWorld(GetWorld());
+		NewSplineMesh->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
+		NewSplineMesh->SetStaticMesh(Mesh);
+		NewSplineMesh->SetForwardAxis(ForwardAxis);
+		NewSplineMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		
+		PooledSplineMeshes.Add(NewSplineMesh);
+	}
 
-		SplineMeshComponent->SetStaticMesh(Mesh);
-		SplineMeshComponent->SetMobility(EComponentMobility::Movable);
-		SplineMeshComponent->CreationMethod=EComponentCreationMethod::UserConstructionScript;
-		SplineMeshComponent->RegisterComponentWithWorld(GetWorld());
-		SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-		const FVector StartPoint=SplineComponent->GetLocationAtSplinePoint(SplineCount, ESplineCoordinateSpace::Local);
-		const FVector StartTangent=SplineComponent->GetTangentAtSplinePoint(SplineCount, ESplineCoordinateSpace::Local);
-		const FVector EndPoint=SplineComponent->GetLocationAtSplinePoint(SplineCount+1, ESplineCoordinateSpace::Local);
-		const FVector EndTangent=SplineComponent->GetTangentAtSplinePoint(SplineCount+1, ESplineCoordinateSpace::Local);
+	// Updating all required spline meshes
+	for (int i = 0; i < RequiredCount; ++i)
+	{
+		USplineMeshComponent* SplineMeshComponent = PooledSplineMeshes[i];
+		const FVector StartPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+		const FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(i, ESplineCoordinateSpace::Local);
+		const FVector EndPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+		const FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
 
 		SplineMeshComponent->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
+		SplineMeshComponent->SetVisibility(true);
+	}
 
-		SplineMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-		SplineMeshComponent->SetForwardAxis(ForwardAxis);
+	// Hiding unused spline mesh components
+	for (int i = RequiredCount; i < PooledSplineMeshes.Num(); ++i)
+	{
+		if (PooledSplineMeshes[i])
+		{
+			PooledSplineMeshes[i]->SetVisibility(false);
+		}
 	}
 }
 
 void ATrackGenerator::AddSplinePoint()
 {
 	// Extend road forward in X with a slight random curve
-	int32 NumPoints = SplineComponent->GetNumberOfSplinePoints();
-	FVector LastLocation = SplineComponent->GetLocationAtSplinePoint(NumPoints - 1, ESplineCoordinateSpace::Local);
-	FVector NewLocation = LastLocation + FVector(SegmentLength, FMath::RandRange(-300.f, 300.f), FMath::RandRange(-200.f, 200.f));
+	FVector NewLocation = RoadEnd + FVector(SegmentLength, FMath::RandRange(-300.f, 300.f), FMath::RandRange(-200.f, 200.f));
 	SplineComponent->AddSplinePoint(NewLocation, ESplineCoordinateSpace::Local);
-	// SplineComponent->UpdateSpline();
-
-	// Recalculate mesh deformation
-	// OnConstruction(GetActorTransform());
 
 	RoadEnd = NewLocation;
 	if (SplineComponent->GetNumberOfSplinePoints() >= 10)
@@ -86,6 +97,7 @@ void ATrackGenerator::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	RoadEnd = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints() - 1, ESplineCoordinateSpace::Local);
 }
 
 void ATrackGenerator::CheckForRoadUpdate()
@@ -94,10 +106,10 @@ void ATrackGenerator::CheckForRoadUpdate()
 	{
 		FVector PlayerLocation = PlayerPawn->GetActorLocation();
 		float Distance = FVector::Dist(PlayerLocation, RoadEnd);
-		UE_LOG(LogTemp, Log, TEXT("Distance: %f"), Distance);
 
 		if (Distance < MinDistance)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
 			AddSplinePoint();
 		}
 	}

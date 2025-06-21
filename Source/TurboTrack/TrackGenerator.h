@@ -42,6 +42,8 @@ private:
 	FVector RoadEnd;
 	APawn* PlayerPawn;
 
+	TArray<USplineMeshComponent*> PooledSplineMeshes;
+	
 	UPROPERTY(EditAnywhere, Category = "Road")
 	float MinDistance=5000.0f;
 
