@@ -1,11 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "TrackGenerator.h"
 
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 ATrackGenerator::ATrackGenerator()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,7 +11,6 @@ ATrackGenerator::ATrackGenerator()
 	{
 		SetRootComponent(SplineComponent);
 	}
-
 }
 
 void ATrackGenerator::OnConstruction(const FTransform& Transform)
@@ -36,8 +31,9 @@ void ATrackGenerator::OnConstruction(const FTransform& Transform)
 	// Ensuring we have enough pooled mesh components
 	while (PooledSplineMeshes.Num() < RequiredCount)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Creating Spline Meshes"));
-		USplineMeshComponent* NewSplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+		// UE_LOG(LogTemp, Warning, TEXT("Creating Spline Meshes"));
+		USplineMeshComponent* NewSplineMesh = NewObject<
+			USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 		NewSplineMesh->SetMobility(EComponentMobility::Movable);
 		NewSplineMesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 		NewSplineMesh->RegisterComponentWithWorld(GetWorld());
@@ -45,7 +41,8 @@ void ATrackGenerator::OnConstruction(const FTransform& Transform)
 		NewSplineMesh->SetStaticMesh(Mesh);
 		NewSplineMesh->SetForwardAxis(ForwardAxis);
 		NewSplineMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		
+		NewSplineMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
 		PooledSplineMeshes.Add(NewSplineMesh);
 	}
 
@@ -60,6 +57,7 @@ void ATrackGenerator::OnConstruction(const FTransform& Transform)
 
 		SplineMeshComponent->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
 		SplineMeshComponent->SetVisibility(true);
+		// DrawDebugBox(GetWorld(), SplineMeshComponent->Bounds.Origin, SplineMeshComponent->Bounds.BoxExtent, FColor::Blue, false, 1.0f);
 	}
 
 	// Hiding unused spline mesh components
@@ -75,29 +73,29 @@ void ATrackGenerator::OnConstruction(const FTransform& Transform)
 void ATrackGenerator::AddSplinePoint()
 {
 	// Extend road forward in X with a slight random curve
-	FVector NewLocation = RoadEnd + FVector(SegmentLength, FMath::RandRange(-300.f, 300.f), FMath::RandRange(-200.f, 200.f));
+	FVector NewLocation = RoadEnd + FVector(SegmentLength, FMath::RandRange(-300.f, 300.f),
+	                                        FMath::RandRange(-200.f, 200.f));
 	SplineComponent->AddSplinePoint(NewLocation, ESplineCoordinateSpace::Local);
 
 	RoadEnd = NewLocation;
-	if (SplineComponent->GetNumberOfSplinePoints() >= 10)
+	if (SplineComponent->GetNumberOfSplinePoints() >= 20)
 	{
 		SplineComponent->RemoveSplinePoint(0, true);
 	}
-	
+
 	SplineComponent->UpdateSpline();
 
 	// Recalculate mesh deformation
 	OnConstruction(GetActorTransform());
-	
 }
 
-// Called when the game starts or when spawned
 void ATrackGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
 	PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	RoadEnd = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints() - 1, ESplineCoordinateSpace::Local);
+	RoadEnd = SplineComponent->GetLocationAtSplinePoint(SplineComponent->GetNumberOfSplinePoints() - 1,
+	                                                    ESplineCoordinateSpace::Local);
 }
 
 void ATrackGenerator::CheckForRoadUpdate()
@@ -109,17 +107,15 @@ void ATrackGenerator::CheckForRoadUpdate()
 
 		if (Distance < MinDistance)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
+			// UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
 			AddSplinePoint();
 		}
 	}
 }
 
-// Called every frame
 void ATrackGenerator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	CheckForRoadUpdate();
 }
-

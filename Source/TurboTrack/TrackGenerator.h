@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,10 +10,10 @@ UCLASS()
 class TURBOTRACK_API ATrackGenerator : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
 	ATrackGenerator();
-	
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -31,7 +29,7 @@ public:
 	//TEST
 	UFUNCTION(CallInEditor, Category = "Road")
 	void AddSplinePoint(); // Can be called in editor for testing
-	//TEST
+
 	UPROPERTY(EditAnywhere, Category = "Road")
 	float SegmentLength = 1000.f;
 
@@ -43,10 +41,9 @@ private:
 	APawn* PlayerPawn;
 
 	TArray<USplineMeshComponent*> PooledSplineMeshes;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Road")
-	float MinDistance=5000.0f;
+	float MinDistance = 5000.0f;
 
 	void CheckForRoadUpdate();
-
 };

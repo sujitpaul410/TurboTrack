@@ -1,13 +1,19 @@
 # TurboTrack
-TurboTrack is a fast-paced, minimalist racing game where tracks are procedurally generated in real time based on the player's movement and position, creating a fresh, endless racing challenge every time you play.
+
+TurboTrack is a fast-paced, minimalist racing game where tracks are procedurally generated in real time based on the
+player's movement and position, creating a fresh, endless racing challenge every time you play.
 
 ## 🎮 Gameplay Features
-- **Procedural Tracks**: Roads are generated dynamically as you drive, creating an endless loop of unpredictability and reflex-based fun.
-- **Boosters & Penalties**: Drive over boost pads to gain speed, or watch out for penalty zones that slow you down or throw you off course.
+
+- **Procedural Tracks**: Roads are generated dynamically as you drive, creating an endless loop of unpredictability and
+  reflex-based fun.
+- **Boosters & Penalties**: Drive over boost pads to gain speed, or watch out for penalty zones that slow you down or
+  throw you off course.
 - **Minimalist Design**: Focused on gameplay and flow. Clean visuals with sharp feedback.
 - **Lightweight Build**: Small footprint, fast load times — play instantly.
 
 ## 🛠️ Tech Stack
+
 - **Engine**: Unreal Engine 5.5
 - **Language**: C++ and Blueprints
 - **Target Platform**: Windows

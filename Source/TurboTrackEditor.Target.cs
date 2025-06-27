@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class TurboTrackEditorTarget : TargetRules
 {
-	public TurboTrackEditorTarget( TargetInfo Target) : base(Target)
+	public TurboTrackEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
