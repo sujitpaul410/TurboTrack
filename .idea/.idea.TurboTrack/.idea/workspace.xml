@@ -27,8 +27,14 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/DebugGarbageCollectionGraph.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/ForceTestActor.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/ForceTestActor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackElementBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackElementBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackElementSpawner.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackElementSpawner.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackObstacle.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackObstacle.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackReward.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/TurboTrack/TrackReward.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -197,6 +203,10 @@
       <workItem from="1750941199950" duration="9585000" />
       <workItem from="1750951502591" duration="496000" />
       <workItem from="1751004731978" duration="1326000" />
+      <workItem from="1751264329942" duration="8163000" />
+      <workItem from="1751279119324" duration="7897000" />
+      <workItem from="1751346032197" duration="6539000" />
+      <workItem from="1751355555306" duration="5957000" />
     </task>
     <servers />
   </component>
