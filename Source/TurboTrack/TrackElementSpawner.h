@@ -16,6 +16,8 @@ public:
 protected:
 	
 	virtual void BeginPlay() override;
+	class APlayerPawn* PlayerPawn;
+	class ATrackReward* Reward;
 
 public:
 	

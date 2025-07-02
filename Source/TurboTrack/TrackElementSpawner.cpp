@@ -1,5 +1,6 @@
 #include "TrackElementSpawner.h"
 
+#include "PlayerPawn.h"
 #include "TrackGenerator.h"
 #include "TrackReward.h"
 #include "Components/SplineComponent.h"
@@ -20,7 +21,9 @@ void ATrackElementSpawner::BeginPlay()
 	//TEST auto spawn nitro track
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATrackElementSpawner::SpawnNitroTrack, 5.0f, true);
+
 	
+	PlayerPawn = Cast<APlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
 
 void ATrackElementSpawner::SpawnNitroTrack()
@@ -36,7 +39,11 @@ void ATrackElementSpawner::SpawnNitroTrack()
 	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
 	
 	FActorSpawnParameters SpawnParams;
-	ATrackReward* Reward = GetWorld()->SpawnActor<ATrackReward>(RewardClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
+	if (Reward != nullptr)
+	{
+		Reward->Destroy();
+	}
+	Reward = GetWorld()->SpawnActor<ATrackReward>(RewardClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
 
 	float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
 	
@@ -66,6 +73,9 @@ void ATrackElementSpawner::SpawnNitroTrack()
 			AheadDistance += NitroTrackSegmentLength;
 		}
 	}
+
+	Reward->OnNitroSplineOverlap.AddDynamic(PlayerPawn, &APlayerPawn::OnNitro);
+	Reward->OnNitroSplineOverlapEnd.AddDynamic(PlayerPawn, &APlayerPawn::OnNitroEnd);
 }
 
 void ATrackElementSpawner::Tick(float DeltaTime)

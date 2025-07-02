@@ -1,4 +1,5 @@
 #include "PlayerPawn.h"
+
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -50,6 +51,14 @@ APlayerPawn::APlayerPawn()
 
 	BackWheelBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BackWheelBase"));
 	BackWheelBase->AttachToComponent(BackRightWheel, FAttachmentTransformRules::KeepRelativeTransform);
+
+	BaseBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BaseBoxComponent"));
+
+	BaseBoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BaseBoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+	BaseBoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	BaseBoxComponent->SetGenerateOverlapEvents(true);
+	BaseBoxComponent->SetupAttachment(RootComponent);
 }
 
 void APlayerPawn::BeginPlay()
@@ -142,12 +151,12 @@ void APlayerPawn::Accelerate(USceneComponent* Wheel, bool bIsGrounded)
 	if (bIsGrounded)
 	{
 		GroundMultiplier = 1;
-		auto Force = Forward * BoxComponent->GetMass() * AccelerationRate * DeltaTime * GroundMultiplier / NumWheels;
+		auto Force = Forward * BoxComponent->GetMass() * AccelerationRate * NitroValue * DeltaTime * GroundMultiplier / NumWheels;
 		BoxComponent->AddForce(Force);
 	}
 	else
 	{
-		auto Force = Forward * BoxComponent->GetMass() * 5 * DeltaTime * GroundMultiplier / NumWheels;
+		auto Force = Forward * BoxComponent->GetMass() * 6 * DeltaTime * GroundMultiplier / NumWheels;
 		BoxComponent->AddForce(Force);
 	}
 
@@ -188,4 +197,17 @@ void APlayerPawn::Steer(float InputVal)
 	Torque.Z += InputVal * TorqueRate;
 	// UE_LOG(LogTemp, Warning, TEXT("InputVal: %f Torque: %ls"), InputVal, *Torque.ToString());
 	BoxComponent->AddTorqueInRadians(Torque);
+}
+
+
+void APlayerPawn::OnNitro()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitro"));
+	NitroValue = 3;
+}
+
+void APlayerPawn::OnNitroEnd()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitroEnd"));
+	NitroValue = 1;
 }

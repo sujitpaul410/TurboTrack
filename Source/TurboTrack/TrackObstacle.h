@@ -11,5 +11,4 @@ class TURBOTRACK_API ATrackObstacle : public ATrackElementBase
 	GENERATED_BODY()
 
 public:
-	virtual void OnPlayerHit(AActor* PlayerActor) override;
 };

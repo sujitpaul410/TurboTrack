@@ -20,6 +20,12 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void OnNitro();
+
+	UFUNCTION()
+	void OnNitroEnd();
+
 private:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComponent;
@@ -61,6 +67,9 @@ private:
 	UStaticMeshComponent* BackWheelBase;
 
 	UPROPERTY(EditAnywhere)
+	UBoxComponent* BaseBoxComponent;
+
+	UPROPERTY(EditAnywhere)
 	float SpringLength = 120;
 
 	UPROPERTY(EditAnywhere)
@@ -92,5 +101,8 @@ private:
 
 	void Accelerate(USceneComponent* Wheel, bool IsGrounded);
 
-	void Steer(float InputVal);
+	void Steer(float InputVal);	
+
+	float NitroValue = 1;
+	
 };

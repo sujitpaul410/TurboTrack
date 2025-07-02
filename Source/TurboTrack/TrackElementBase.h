@@ -17,6 +17,15 @@ public:
 protected:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PopulateSplineMeshes();
+	
+	UFUNCTION()
+	virtual void OnMeshOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+					   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+					   bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+	virtual void OnMeshOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+					   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(VisibleAnywhere, Category = "Spline", meta = (AllowPrivateAccess = "true"))
 	USplineComponent* SplineComponent;
@@ -34,12 +43,6 @@ protected:
 	// class UBoxComponent* CollisionBox;
 
 public:
-	virtual void InitializeAt(FVector& Location, FVector& Tangent);
-	virtual void OnPlayerHit(AActor* PlayerActor);
-	virtual void Deactivate();
-	
-	
 	UFUNCTION()
 	virtual void AddSplinePoint(FVector& Location, FVector& Tangent);
-
 };
