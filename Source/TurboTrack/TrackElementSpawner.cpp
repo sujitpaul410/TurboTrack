@@ -41,6 +41,8 @@ void ATrackElementSpawner::SpawnNitroTrack()
 	FActorSpawnParameters SpawnParams;
 	if (Reward != nullptr)
 	{
+		Reward->OnNitroSplineOverlap.RemoveDynamic(PlayerPawn, &APlayerPawn::OnNitro);
+		Reward->OnNitroSplineOverlapEnd.RemoveDynamic(PlayerPawn, &APlayerPawn::OnNitroEnd);
 		Reward->Destroy();
 	}
 	Reward = GetWorld()->SpawnActor<ATrackReward>(RewardClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
