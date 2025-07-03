@@ -134,12 +134,18 @@ void APlayerPawn::ApplySuspensionAndDrive(USceneComponent* Wheel)
 			BackWheelBase->SetRelativeLocation(CurrWheelBaseLocation);
 		}
 
-		Accelerate(Wheel, true);
+		if (HasGameStarted)
+		{
+			Accelerate(Wheel, true);
+		}
 	}
 	else
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Nothing hit."));
-		Accelerate(Wheel, false);
+		if (HasGameStarted)
+		{
+			Accelerate(Wheel, false);
+		}
 	}
 }
 

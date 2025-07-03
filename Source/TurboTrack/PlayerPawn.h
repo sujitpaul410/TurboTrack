@@ -104,5 +104,7 @@ private:
 	void Steer(float InputVal);	
 
 	float NitroValue = 1;
+
+	bool HasGameStarted = false;
 	
 };
