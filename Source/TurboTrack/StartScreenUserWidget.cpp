@@ -77,11 +77,14 @@ void UStartScreenUserWidget::OnNextSelected()
 void UStartScreenUserWidget::OnStartGameSelected()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnStartGameSelected"));
-	if (CurrIndx == 0)
+	
+	AActor* UsedActor = FoundVehicleActors[CurrIndx];
+	
+	if (UsedActor->Tags.Contains(FName("Truck")))
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), FName("TruckDrive"));
 	}
-	else if (CurrIndx == 1)
+	else if (UsedActor->Tags.Contains(FName("Sedan")))
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), FName("SedanDrive"));
 	}
