@@ -14,6 +14,10 @@ void UStartScreenUserWidget::NativeConstruct()
 	{
 		NextButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnNextSelected);
 	}
+	if (StartGameButton)
+	{
+		StartGameButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnStartGameSelected);
+	}
 
 	if (FoundVehicleActors.Num() > 1)
 	{
@@ -67,5 +71,18 @@ void UStartScreenUserWidget::OnNextSelected()
 		UsedActor->SetActorLocation(FVector(0, 0, 523));
 
 		CurrIndx = NewIndx;
+	}
+}
+
+void UStartScreenUserWidget::OnStartGameSelected()
+{
+	UE_LOG(LogTemp, Display, TEXT("OnStartGameSelected"));
+	if (CurrIndx == 0)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), FName("TruckDrive"));
+	}
+	else if (CurrIndx == 1)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), FName("SedanDrive"));
 	}
 }

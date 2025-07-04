@@ -67,6 +67,12 @@ void APlayerPawn::BeginPlay()
 
 	BoxComponent->SetCenterOfMass(ForwardCenterOfMass);
 	FrontLeftWheelRotator = FrontLeftWheel->GetRelativeRotation();
+
+	FString LevelName = GetWorld()->GetMapName();
+	if (LevelName.Contains("TruckDrive") || LevelName.Contains("SedanDrive"))
+	{
+		HasGameStarted = true;
+	}
 }
 
 void APlayerPawn::Tick(float DeltaTime)

@@ -12,9 +12,16 @@ class TURBOTRACK_API UStartScreenUserWidget : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* NextButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* StartGameButton;
+	
 
 	UFUNCTION()
 	void OnNextSelected();
+
+	UFUNCTION()
+	void OnStartGameSelected();
 
 protected:
 	virtual void NativeConstruct() override;
