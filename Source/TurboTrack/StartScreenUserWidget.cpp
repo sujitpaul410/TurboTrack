@@ -1,8 +1,11 @@
 #include "StartScreenUserWidget.h"
 
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
+
+class UTextBlock;
 
 void UStartScreenUserWidget::NativeConstruct()
 {
@@ -12,11 +15,21 @@ void UStartScreenUserWidget::NativeConstruct()
 	
 	if (NextButton)
 	{
+		NextButton->OnHovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonHovered);
+		NextButton->OnUnhovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonUnHovered);
 		NextButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnNextSelected);
+		
+		NextBtnTextBlock = Cast<UTextBlock>(NextButton->GetChildAt(0));
+		NextBtnInitialColor = NextBtnTextBlock->GetColorAndOpacity();
 	}
 	if (StartGameButton)
 	{
+		StartGameButton->OnHovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonHovered);
+		StartGameButton->OnUnhovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonUnHovered);
 		StartGameButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnStartGameSelected);
+		
+		StartBtnTextBlock = Cast<UTextBlock>(StartGameButton->GetChildAt(0));
+		StartBtnInitialColor = StartBtnTextBlock->GetColorAndOpacity();
 	}
 
 	if (FoundVehicleActors.Num() > 1)
@@ -48,6 +61,8 @@ void UStartScreenUserWidget::OnNextSelected()
 	{
 		return;
 	}
+
+	NextButton->SetRenderScale(FVector2D(0.9f, 0.9f));
 	
 	if (FoundVehicleActors.Num() > 1)
 	{
@@ -71,6 +86,39 @@ void UStartScreenUserWidget::OnNextSelected()
 		UsedActor->SetActorLocation(FVector(0, 0, 523));
 
 		CurrIndx = NewIndx;
+	}
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle,[this]()
+		{
+			NextButton->SetRenderScale(FVector2D(1.0f, 1.0f));
+		},
+		0.1f,
+		false
+	);
+}
+
+void UStartScreenUserWidget::OnButtonHovered()
+{
+	if (NextButton->IsHovered())
+	{
+		NextBtnTextBlock->SetColorAndOpacity(FSlateColor(FLinearColor::Blue));
+	}
+	else if (StartGameButton->IsHovered())
+	{
+		StartBtnTextBlock->SetColorAndOpacity(FSlateColor(FLinearColor::Blue));
+	}
+}
+
+void UStartScreenUserWidget::OnButtonUnHovered()
+{
+	if (!NextButton->IsHovered())
+	{
+		NextBtnTextBlock->SetColorAndOpacity(NextBtnInitialColor);
+	}
+	if (!StartGameButton->IsHovered())
+	{
+		StartBtnTextBlock->SetColorAndOpacity(StartBtnInitialColor);
 	}
 }
 

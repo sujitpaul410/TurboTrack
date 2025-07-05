@@ -21,6 +21,12 @@ class TURBOTRACK_API UStartScreenUserWidget : public UUserWidget
 	void OnNextSelected();
 
 	UFUNCTION()
+	void OnButtonHovered();
+
+	UFUNCTION()
+	void OnButtonUnHovered();
+
+	UFUNCTION()
 	void OnStartGameSelected();
 
 protected:
@@ -29,4 +35,10 @@ protected:
 private:
 	TArray<AActor*> FoundVehicleActors;
 	int CurrIndx = 0;
+
+	FSlateColor NextBtnInitialColor;
+	FSlateColor StartBtnInitialColor;
+	
+	class UTextBlock* NextBtnTextBlock;
+	UTextBlock* StartBtnTextBlock;
 };
