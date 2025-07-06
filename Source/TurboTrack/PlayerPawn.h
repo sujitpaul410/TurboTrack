@@ -26,6 +26,9 @@ public:
 	UFUNCTION()
 	void OnNitroEnd();
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "FX")
+	class UNiagaraComponent* SpeedLines;
+
 private:
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComponent;

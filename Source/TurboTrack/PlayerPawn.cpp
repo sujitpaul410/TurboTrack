@@ -2,6 +2,7 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
+#include "NiagaraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 
@@ -73,6 +74,8 @@ void APlayerPawn::BeginPlay()
 	{
 		HasGameStarted = true;
 	}
+	
+	SpeedLines = FindComponentByClass<UNiagaraComponent>();
 }
 
 void APlayerPawn::Tick(float DeltaTime)
@@ -216,10 +219,27 @@ void APlayerPawn::OnNitro()
 {
 	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitro"));
 	NitroValue = 3;
+	if (!SpeedLines)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+	}
+	else
+	{
+		SpeedLines->Activate(true);
+	}
 }
 
 void APlayerPawn::OnNitroEnd()
 {
 	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitroEnd"));
 	NitroValue = 1;
+	if (!SpeedLines)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+	}
+	else
+	{
+		SpeedLines->DeactivateImmediate();
+		// SpeedLines->Activate(false);
+	}
 }
