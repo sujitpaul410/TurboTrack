@@ -22,6 +22,9 @@ void ATrackElementSpawner::BeginPlay()
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATrackElementSpawner::SpawnNitroTrack, 5.0f, true);
 
+	FTimerHandle TimerHandleNew;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandleNew, this, &ATrackElementSpawner::SpawnHammerObstacle, 10.0f, true);
+
 	
 	PlayerPawn = Cast<APlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
@@ -84,5 +87,31 @@ void ATrackElementSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ATrackElementSpawner::SpawnHammerObstacle()
+{
+	UE_LOG(LogTemp, Warning, TEXT("HammerObstacle"));
+	if (!TrackGenerator || !TrackGenerator->SplineComponent || !RewardClass)
+		return;
+
+	USplineComponent* MainSpline = TrackGenerator->SplineComponent;
+	
+	int MidSegment = MainSpline->GetNumberOfSplinePoints() - 2;
+	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
+
+	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
+	MidLoc.Z += HammerZOffset;
+	FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World).GetSafeNormal();
+	
+	if (HammerObstacle != nullptr)
+	{
+		// HammerObstacle->SetActorLocation(MidLoc);
+		// HammerObstacle->SetActorRotation(Tangent.Rotation());
+		HammerObstacle->Destroy();
+		// return;
+	}
+	FActorSpawnParameters SpawnParams;
+	HammerObstacle = GetWorld()->SpawnActor<AActor>(HammerObstacleBlueprint, MidLoc, Tangent.Rotation(), SpawnParams);
 }
 

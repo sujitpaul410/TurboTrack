@@ -18,6 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 	class APlayerPawn* PlayerPawn;
 	class ATrackReward* Reward;
+	AActor* HammerObstacle;
 
 public:
 	
@@ -42,5 +43,14 @@ public:
 	void SpawnNitroTrack();
 
 	virtual void Tick(float DeltaTime) override;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Obstacle")
+	TSubclassOf<AActor> HammerObstacleBlueprint;
+	
+	UPROPERTY(EditAnywhere, Category = "Obstacle")
+	float HammerZOffset = 1250.0f;
+	
+	void SpawnHammerObstacle();
 
 };
