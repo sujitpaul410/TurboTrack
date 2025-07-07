@@ -25,6 +25,12 @@ public:
 
 	UFUNCTION()
 	void OnNitroEnd();
+	
+	UFUNCTION()
+	void OnLazy();
+
+	UFUNCTION()
+	void OnLazyEnd();
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "FX")
 	class UNiagaraComponent* SpeedLines;
