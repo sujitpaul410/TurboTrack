@@ -18,7 +18,12 @@ protected:
 	virtual void BeginPlay() override;
 	class APlayerPawn* PlayerPawn;
 	class ATrackReward* Reward;
+	class ATrackObstacle* Obstacle;
 	AActor* HammerObstacle;
+	AActor* ConeObstacle;
+
+	void SpawnTrackTypeElement();
+	void SpawnNonTrackTypeElement();
 
 public:
 	
@@ -27,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Track")
 	TSubclassOf<class ATrackReward> RewardClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Track")
+	TSubclassOf<class ATrackObstacle> ObstacleClass;
 
 	UPROPERTY(EditAnywhere, Category = "Track")
 	float SideOffsetAmount = 500.0f;
@@ -40,7 +48,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Track")
 	int NitroTrackMaxSplinePoints = 6;
 	
+	UPROPERTY(EditAnywhere, Category = "Track")
+	int LazyTrackMaxSplinePoints = 6;
+
+	UPROPERTY(EditAnywhere, Category = "Track")
+	float LazyTrackZOffset = 20.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Track")
+	float LazyTrackSegmentLength = 600.0f;
+	
 	void SpawnNitroTrack();
+	void SpawnLazyTrack();
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -49,8 +67,14 @@ public:
 	TSubclassOf<AActor> HammerObstacleBlueprint;
 	
 	UPROPERTY(EditAnywhere, Category = "Obstacle")
+	TSubclassOf<AActor> ConeObstacleBlueprint;
+	
+	UPROPERTY(EditAnywhere, Category = "Obstacle")
 	float HammerZOffset = 1250.0f;
 	
-	void SpawnHammerObstacle();
+	UPROPERTY(EditAnywhere, Category = "Obstacle")
+	float ConeZOffset = 12.0f;
+	
+	void SpawnHitableElement(AActor*& Obj, TSubclassOf<AActor>& BlueprintClass, float ZOffset, bool bIsSideOffsetRequired = false);
 
 };

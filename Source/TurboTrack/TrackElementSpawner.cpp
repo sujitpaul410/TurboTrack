@@ -2,6 +2,7 @@
 
 #include "PlayerPawn.h"
 #include "TrackGenerator.h"
+#include "TrackObstacle.h"
 #include "TrackReward.h"
 #include "Components/SplineComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,16 +18,43 @@ ATrackElementSpawner::ATrackElementSpawner()
 void ATrackElementSpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	FTimerHandle TrackElementTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TrackElementTimerHandle, this, &ATrackElementSpawner::SpawnTrackTypeElement, 4.0f, true);
 
-	//TEST auto spawn nitro track
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATrackElementSpawner::SpawnNitroTrack, 5.0f, true);
-
-	FTimerHandle TimerHandleNew;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandleNew, this, &ATrackElementSpawner::SpawnHammerObstacle, 10.0f, true);
+	FTimerHandle ObstacleElementTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(ObstacleElementTimerHandle, this, &ATrackElementSpawner::SpawnNonTrackTypeElement, 15.0f, true);
 
 	
 	PlayerPawn = Cast<APlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+}
+
+void ATrackElementSpawner::SpawnTrackTypeElement()
+{
+	int RandomNumber = FMath::RandRange(1, 2);
+	
+	if (RandomNumber == 1)
+	{
+		SpawnNitroTrack();
+	}
+	else if (RandomNumber == 2)
+	{
+		SpawnLazyTrack();
+	}
+}
+
+void ATrackElementSpawner::SpawnNonTrackTypeElement()
+{
+	int RandomNumber = FMath::RandRange(1, 2);
+	
+	if (RandomNumber == 1)
+	{
+		SpawnHitableElement(HammerObstacle, HammerObstacleBlueprint, HammerZOffset);
+	}
+	else if (RandomNumber == 2)
+	{
+		SpawnHitableElement(ConeObstacle, ConeObstacleBlueprint, ConeZOffset, true);
+	}
 }
 
 void ATrackElementSpawner::SpawnNitroTrack()
@@ -83,15 +111,69 @@ void ATrackElementSpawner::SpawnNitroTrack()
 	Reward->OnNitroSplineOverlapEnd.AddDynamic(PlayerPawn, &APlayerPawn::OnNitroEnd);
 }
 
+void ATrackElementSpawner::SpawnLazyTrack()
+{
+	if (!TrackGenerator || !TrackGenerator->SplineComponent || !RewardClass)
+		return;
+
+	USplineComponent* MainSpline = TrackGenerator->SplineComponent;
+	
+	int MidSegment = MainSpline->GetNumberOfSplinePoints() / 2;
+	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
+
+	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
+	
+	FActorSpawnParameters SpawnParams;
+	if (Obstacle != nullptr)
+	{
+		Obstacle->OnLazySplineOverlap.RemoveDynamic(PlayerPawn, &APlayerPawn::OnLazy);
+		Obstacle->OnLazySplineOverlapEnd.RemoveDynamic(PlayerPawn, &APlayerPawn::OnLazyEnd);
+		Obstacle->Destroy();
+	}
+	Obstacle = GetWorld()->SpawnActor<ATrackObstacle>(ObstacleClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
+
+	float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
+	
+	FVector CurrLoc = Obstacle->GetActorLocation();
+	CurrLoc.Y += SideOffset;
+	Obstacle->SetActorLocation(CurrLoc);
+	
+	if (Obstacle)
+	{
+		float AheadDistance = MidDistance;
+		float MaxDistance = MainSpline->GetSplineLength();
+
+		for (int i = 0; i < LazyTrackMaxSplinePoints; ++i)
+		{
+			if (AheadDistance > MaxDistance)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Lazy Track breaking"));
+				break;
+			}
+
+			FVector Loc = MainSpline->GetLocationAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World);
+			Loc.Z += LazyTrackZOffset;
+			Loc.Y += SideOffset;
+			FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World).GetSafeNormal() * LazyTrackSegmentLength;
+			Obstacle->AddSplinePoint(Loc, Tangent);
+
+			AheadDistance += LazyTrackSegmentLength;
+		}
+	}
+
+	Obstacle->OnLazySplineOverlap.AddDynamic(PlayerPawn, &APlayerPawn::OnLazy);
+	Obstacle->OnLazySplineOverlapEnd.AddDynamic(PlayerPawn, &APlayerPawn::OnLazyEnd);
+}
+
 void ATrackElementSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void ATrackElementSpawner::SpawnHammerObstacle()
+void ATrackElementSpawner::SpawnHitableElement(AActor*& Obj, TSubclassOf<AActor>& BlueprintClass, float ZOffset, bool bIsSideOffsetRequired)
 {
-	UE_LOG(LogTemp, Warning, TEXT("HammerObstacle"));
+	UE_LOG(LogTemp, Warning, TEXT("Hitable Element"));
 	if (!TrackGenerator || !TrackGenerator->SplineComponent || !RewardClass)
 		return;
 
@@ -101,17 +183,25 @@ void ATrackElementSpawner::SpawnHammerObstacle()
 	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
 
 	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
-	MidLoc.Z += HammerZOffset;
+	MidLoc.Z += ZOffset;
 	FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World).GetSafeNormal();
 	
-	if (HammerObstacle != nullptr)
+	if (Obj != nullptr)
 	{
-		// HammerObstacle->SetActorLocation(MidLoc);
-		// HammerObstacle->SetActorRotation(Tangent.Rotation());
-		HammerObstacle->Destroy();
-		// return;
+		// UE_LOG(LogTemp, Warning, TEXT("Hitable Element Destroyed"));
+		Obj->Destroy();
 	}
 	FActorSpawnParameters SpawnParams;
-	HammerObstacle = GetWorld()->SpawnActor<AActor>(HammerObstacleBlueprint, MidLoc, Tangent.Rotation(), SpawnParams);
+
+	if (bIsSideOffsetRequired)
+	{
+		float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
+		MidLoc.Y += SideOffset;
+		Obj = GetWorld()->SpawnActor<AActor>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
+	}
+	else
+	{
+		Obj = GetWorld()->SpawnActor<AActor>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
+	}
 }
 

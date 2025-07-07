@@ -243,3 +243,16 @@ void APlayerPawn::OnNitroEnd()
 		// SpeedLines->Activate(false);
 	}
 }
+
+
+void APlayerPawn::OnLazy()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazy"));
+	NitroValue = 0.5;
+}
+
+void APlayerPawn::OnLazyEnd()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazyEnd"));
+	NitroValue = 1;
+}
