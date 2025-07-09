@@ -1,5 +1,6 @@
 #include "TrackElementSpawner.h"
 
+#include "Interactable.h"
 #include "PlayerPawn.h"
 #include "TrackGenerator.h"
 #include "TrackObstacle.h"
@@ -10,29 +11,29 @@
 
 ATrackElementSpawner::ATrackElementSpawner()
 {
- 	
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 void ATrackElementSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	FTimerHandle TrackElementTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TrackElementTimerHandle, this, &ATrackElementSpawner::SpawnTrackTypeElement, 4.0f, true);
+	GetWorld()->GetTimerManager().SetTimer(TrackElementTimerHandle, this, &ATrackElementSpawner::SpawnTrackTypeElement,
+	                                       4.0f, true);
 
 	FTimerHandle ObstacleElementTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(ObstacleElementTimerHandle, this, &ATrackElementSpawner::SpawnNonTrackTypeElement, 15.0f, true);
+	GetWorld()->GetTimerManager().SetTimer(ObstacleElementTimerHandle, this,
+	                                       &ATrackElementSpawner::SpawnNonTrackTypeElement, 15.0f, true);
 
-	
+
 	PlayerPawn = Cast<APlayerPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
 
 void ATrackElementSpawner::SpawnTrackTypeElement()
 {
 	int RandomNumber = FMath::RandRange(1, 2);
-	
+
 	if (RandomNumber == 1)
 	{
 		SpawnNitroTrack();
@@ -45,15 +46,30 @@ void ATrackElementSpawner::SpawnTrackTypeElement()
 
 void ATrackElementSpawner::SpawnNonTrackTypeElement()
 {
-	int RandomNumber = FMath::RandRange(1, 2);
-	
-	if (RandomNumber == 1)
+	int RandomNumber = FMath::RandRange(1, 4);
+
+	switch (RandomNumber)
 	{
+	case 1:
 		SpawnHitableElement(HammerObstacle, HammerObstacleBlueprint, HammerZOffset);
-	}
-	else if (RandomNumber == 2)
-	{
+		break;
+
+	case 2:
 		SpawnHitableElement(ConeObstacle, ConeObstacleBlueprint, ConeZOffset, true);
+		break;
+
+	case 3:
+		// UE_LOG(LogTemp, Display, TEXT("Spawning  Super Nitro"));
+		SpawnHitableElement(SuperNitro, SuperNitroBlueprint, SuperNitroZOffset, true);
+		SuperNitro->OnSuperNitroPickupOverlap.AddDynamic(PlayerPawn, &APlayerPawn::OnSuperNitro);
+		break;
+
+	case 4:
+		SpawnHitableElement(Sign, SignBlueprint, ConeZOffset, true);
+		break;
+
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("Missed spawning case"));
 	}
 }
 
@@ -63,12 +79,12 @@ void ATrackElementSpawner::SpawnNitroTrack()
 		return;
 
 	USplineComponent* MainSpline = TrackGenerator->SplineComponent;
-	
+
 	int MidSegment = MainSpline->GetNumberOfSplinePoints() / 2;
 	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
 
 	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
-	
+
 	FActorSpawnParameters SpawnParams;
 	if (Reward != nullptr)
 	{
@@ -79,11 +95,11 @@ void ATrackElementSpawner::SpawnNitroTrack()
 	Reward = GetWorld()->SpawnActor<ATrackReward>(RewardClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
 
 	float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
-	
+
 	FVector CurrLoc = Reward->GetActorLocation();
 	CurrLoc.Y += SideOffset;
 	Reward->SetActorLocation(CurrLoc);
-	
+
 	if (Reward)
 	{
 		float AheadDistance = MidDistance;
@@ -93,14 +109,15 @@ void ATrackElementSpawner::SpawnNitroTrack()
 		{
 			if (AheadDistance > MaxDistance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Nito Track breaking"));
+				// UE_LOG(LogTemp, Warning, TEXT("Nito Track breaking"));
 				break;
 			}
 
 			FVector Loc = MainSpline->GetLocationAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World);
 			Loc.Z += NitroTrackZOffset;
 			Loc.Y += SideOffset;
-			FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World).GetSafeNormal() * NitroTrackSegmentLength;
+			FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World).
+			                              GetSafeNormal() * NitroTrackSegmentLength;
 			Reward->AddSplinePoint(Loc, Tangent);
 
 			AheadDistance += NitroTrackSegmentLength;
@@ -117,12 +134,12 @@ void ATrackElementSpawner::SpawnLazyTrack()
 		return;
 
 	USplineComponent* MainSpline = TrackGenerator->SplineComponent;
-	
+
 	int MidSegment = MainSpline->GetNumberOfSplinePoints() / 2;
 	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
 
 	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
-	
+
 	FActorSpawnParameters SpawnParams;
 	if (Obstacle != nullptr)
 	{
@@ -133,11 +150,11 @@ void ATrackElementSpawner::SpawnLazyTrack()
 	Obstacle = GetWorld()->SpawnActor<ATrackObstacle>(ObstacleClass, MidLoc, FRotator::ZeroRotator, SpawnParams);
 
 	float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
-	
+
 	FVector CurrLoc = Obstacle->GetActorLocation();
 	CurrLoc.Y += SideOffset;
 	Obstacle->SetActorLocation(CurrLoc);
-	
+
 	if (Obstacle)
 	{
 		float AheadDistance = MidDistance;
@@ -147,14 +164,15 @@ void ATrackElementSpawner::SpawnLazyTrack()
 		{
 			if (AheadDistance > MaxDistance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Lazy Track breaking"));
+				// UE_LOG(LogTemp, Warning, TEXT("Lazy Track breaking"));
 				break;
 			}
 
 			FVector Loc = MainSpline->GetLocationAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World);
 			Loc.Z += LazyTrackZOffset;
 			Loc.Y += SideOffset;
-			FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World).GetSafeNormal() * LazyTrackSegmentLength;
+			FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(AheadDistance, ESplineCoordinateSpace::World).
+			                              GetSafeNormal() * LazyTrackSegmentLength;
 			Obstacle->AddSplinePoint(Loc, Tangent);
 
 			AheadDistance += LazyTrackSegmentLength;
@@ -168,24 +186,25 @@ void ATrackElementSpawner::SpawnLazyTrack()
 void ATrackElementSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void ATrackElementSpawner::SpawnHitableElement(AActor*& Obj, TSubclassOf<AActor>& BlueprintClass, float ZOffset, bool bIsSideOffsetRequired)
+void ATrackElementSpawner::SpawnHitableElement(AInteractable*& Obj, TSubclassOf<AInteractable>& BlueprintClass,
+                                               float ZOffset, bool bIsSideOffsetRequired)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hitable Element"));
+	// UE_LOG(LogTemp, Warning, TEXT("Hitable Element"));
 	if (!TrackGenerator || !TrackGenerator->SplineComponent || !RewardClass)
 		return;
 
 	USplineComponent* MainSpline = TrackGenerator->SplineComponent;
-	
+
 	int MidSegment = MainSpline->GetNumberOfSplinePoints() - 2;
 	float MidDistance = MainSpline->GetDistanceAlongSplineAtSplinePoint(MidSegment);
 
 	FVector MidLoc = MainSpline->GetLocationAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World);
 	MidLoc.Z += ZOffset;
-	FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World).GetSafeNormal();
-	
+	FVector Tangent = MainSpline->GetTangentAtDistanceAlongSpline(MidDistance, ESplineCoordinateSpace::World).
+	                              GetSafeNormal();
+
 	if (Obj != nullptr)
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Hitable Element Destroyed"));
@@ -197,11 +216,10 @@ void ATrackElementSpawner::SpawnHitableElement(AActor*& Obj, TSubclassOf<AActor>
 	{
 		float SideOffset = FMath::RandRange(-1, 1) * SideOffsetAmount;
 		MidLoc.Y += SideOffset;
-		Obj = GetWorld()->SpawnActor<AActor>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
+		Obj = GetWorld()->SpawnActor<AInteractable>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
 	}
 	else
 	{
-		Obj = GetWorld()->SpawnActor<AActor>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
+		Obj = GetWorld()->SpawnActor<AInteractable>(BlueprintClass, MidLoc, Tangent.Rotation(), SpawnParams);
 	}
 }
-

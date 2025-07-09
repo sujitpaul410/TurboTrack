@@ -10,22 +10,21 @@ UCLASS(Abstract)
 class TURBOTRACK_API ATrackElementBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ATrackElementBase();
-	
+
 protected:
-	
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PopulateSplineMeshes();
-	
+
 	UFUNCTION()
 	virtual void OnMeshOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-					   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-					   bool bFromSweep, const FHitResult & SweepResult);
+	                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+	                           bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	virtual void OnMeshOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-					   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(VisibleAnywhere, Category = "Spline", meta = (AllowPrivateAccess = "true"))
 	USplineComponent* SplineComponent;

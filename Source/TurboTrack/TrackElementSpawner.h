@@ -8,31 +8,30 @@ UCLASS()
 class TURBOTRACK_API ATrackElementSpawner : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	
+
+public:
 	ATrackElementSpawner();
 
 protected:
-	
 	virtual void BeginPlay() override;
 	class APlayerPawn* PlayerPawn;
 	class ATrackReward* Reward;
 	class ATrackObstacle* Obstacle;
-	AActor* HammerObstacle;
-	AActor* ConeObstacle;
+	class AInteractable* HammerObstacle;
+	AInteractable* ConeObstacle;
+	AInteractable* SuperNitro;
+	AInteractable* Sign;
 
 	void SpawnTrackTypeElement();
 	void SpawnNonTrackTypeElement();
 
 public:
-	
 	UPROPERTY(EditInstanceOnly, Category="Track")
 	class ATrackGenerator* TrackGenerator;
 
 	UPROPERTY(EditAnywhere, Category = "Track")
 	TSubclassOf<class ATrackReward> RewardClass;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Track")
 	TSubclassOf<class ATrackObstacle> ObstacleClass;
 
@@ -47,34 +46,43 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Track")
 	int NitroTrackMaxSplinePoints = 6;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Track")
 	int LazyTrackMaxSplinePoints = 6;
 
 	UPROPERTY(EditAnywhere, Category = "Track")
 	float LazyTrackZOffset = 20.0f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Track")
 	float LazyTrackSegmentLength = 600.0f;
-	
+
 	void SpawnNitroTrack();
 	void SpawnLazyTrack();
 
 	virtual void Tick(float DeltaTime) override;
 
-	
+
 	UPROPERTY(EditAnywhere, Category = "Obstacle")
-	TSubclassOf<AActor> HammerObstacleBlueprint;
-	
+	TSubclassOf<AInteractable> HammerObstacleBlueprint;
+
 	UPROPERTY(EditAnywhere, Category = "Obstacle")
-	TSubclassOf<AActor> ConeObstacleBlueprint;
-	
+	TSubclassOf<AInteractable> ConeObstacleBlueprint;
+
+	UPROPERTY(EditAnywhere, Category = "SuperNitro")
+	TSubclassOf<class AInteractable> SuperNitroBlueprint;
+
+	UPROPERTY(EditAnywhere, Category = "SuperNitro")
+	TSubclassOf<class AInteractable> SignBlueprint;
+
 	UPROPERTY(EditAnywhere, Category = "Obstacle")
 	float HammerZOffset = 1250.0f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Obstacle")
 	float ConeZOffset = 12.0f;
-	
-	void SpawnHitableElement(AActor*& Obj, TSubclassOf<AActor>& BlueprintClass, float ZOffset, bool bIsSideOffsetRequired = false);
 
+	UPROPERTY(EditAnywhere, Category = "SuperNitro")
+	float SuperNitroZOffset = 12.0f;
+
+	void SpawnHitableElement(AInteractable*& Obj, TSubclassOf<AInteractable>& BlueprintClass, float ZOffset,
+	                         bool bIsSideOffsetRequired = false);
 };

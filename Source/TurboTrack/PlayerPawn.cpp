@@ -74,7 +74,7 @@ void APlayerPawn::BeginPlay()
 	{
 		HasGameStarted = true;
 	}
-	
+
 	SpeedLines = FindComponentByClass<UNiagaraComponent>();
 }
 
@@ -166,7 +166,8 @@ void APlayerPawn::Accelerate(USceneComponent* Wheel, bool bIsGrounded)
 	if (bIsGrounded)
 	{
 		GroundMultiplier = 1;
-		auto Force = Forward * BoxComponent->GetMass() * AccelerationRate * NitroValue * DeltaTime * GroundMultiplier / NumWheels;
+		auto Force = Forward * BoxComponent->GetMass() * AccelerationRate * NitroValue * DeltaTime * GroundMultiplier /
+			NumWheels;
 		BoxComponent->AddForce(Force);
 	}
 	else
@@ -217,42 +218,72 @@ void APlayerPawn::Steer(float InputVal)
 
 void APlayerPawn::OnNitro()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitro"));
-	NitroValue = 3;
-	if (!SpeedLines)
+	// UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitro"));
+	if (!IsOnSuperNitro)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
-	}
-	else
-	{
-		SpeedLines->Activate(true);
+		NitroValue = 2;
+		if (!SpeedLines)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+		}
+		else
+		{
+			SpeedLines->Activate(true);
+		}
 	}
 }
 
 void APlayerPawn::OnNitroEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitroEnd"));
-	NitroValue = 1;
-	if (!SpeedLines)
+	// UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnNitroEnd"));
+	if (!IsOnSuperNitro)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
-	}
-	else
-	{
-		SpeedLines->DeactivateImmediate();
-		// SpeedLines->Activate(false);
+		NitroValue = 1;
+		if (!SpeedLines)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+		}
+		else
+		{
+			SpeedLines->DeactivateImmediate();
+			// SpeedLines->Activate(false);
+		}
 	}
 }
 
 
 void APlayerPawn::OnLazy()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazy"));
-	NitroValue = 0.5;
+	// UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazy"));
+	if (!IsOnSuperNitro)
+	{
+		NitroValue = 0.5;
+	}
 }
 
 void APlayerPawn::OnLazyEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazyEnd"));
-	NitroValue = 1;
+	// UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnLazyEnd"));
+	if (!IsOnSuperNitro)
+	{
+		NitroValue = 1;
+	}
+}
+
+void APlayerPawn::OnSuperNitro()
+{
+	// UE_LOG(LogTemp, Warning, TEXT("PlayerPawn OnSuperNitro"));
+	if (!IsOnSuperNitro)
+	{
+		NitroValue = 1.8;
+		IsOnSuperNitro = true;
+		if (!SpeedLines)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+		}
+		else
+		{
+			SpeedLines->Activate(true);
+		}
+	}
 }

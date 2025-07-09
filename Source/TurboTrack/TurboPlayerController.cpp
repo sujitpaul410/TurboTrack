@@ -11,7 +11,7 @@ void ATurboPlayerController::BeginPlay()
 
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), CarSelectWidgetClass);
 	Widget->AddToViewport();
-	
+
 	for (TActorIterator<ACameraActor> It(GetWorld()); It; ++It)
 	{
 		ACameraActor* Cam = *It;

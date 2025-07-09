@@ -25,12 +25,15 @@ public:
 
 	UFUNCTION()
 	void OnNitroEnd();
-	
+
 	UFUNCTION()
 	void OnLazy();
 
 	UFUNCTION()
 	void OnLazyEnd();
+
+	UFUNCTION()
+	void OnSuperNitro();
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "FX")
 	class UNiagaraComponent* SpeedLines;
@@ -110,10 +113,11 @@ private:
 
 	void Accelerate(USceneComponent* Wheel, bool IsGrounded);
 
-	void Steer(float InputVal);	
+	void Steer(float InputVal);
 
 	float NitroValue = 1;
 
 	bool HasGameStarted = false;
-	
+
+	bool IsOnSuperNitro = false;
 };

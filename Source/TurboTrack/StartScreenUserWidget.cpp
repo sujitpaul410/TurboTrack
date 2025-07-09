@@ -12,13 +12,13 @@ void UStartScreenUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(TEXT("Vehicle")), FoundVehicleActors);
-	
+
 	if (NextButton)
 	{
 		NextButton->OnHovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonHovered);
 		NextButton->OnUnhovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonUnHovered);
 		NextButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnNextSelected);
-		
+
 		NextBtnTextBlock = Cast<UTextBlock>(NextButton->GetChildAt(0));
 		NextBtnInitialColor = NextBtnTextBlock->GetColorAndOpacity();
 	}
@@ -27,7 +27,7 @@ void UStartScreenUserWidget::NativeConstruct()
 		StartGameButton->OnHovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonHovered);
 		StartGameButton->OnUnhovered.AddDynamic(this, &UStartScreenUserWidget::OnButtonUnHovered);
 		StartGameButton->OnClicked.AddDynamic(this, &UStartScreenUserWidget::OnStartGameSelected);
-		
+
 		StartBtnTextBlock = Cast<UTextBlock>(StartGameButton->GetChildAt(0));
 		StartBtnInitialColor = StartBtnTextBlock->GetColorAndOpacity();
 	}
@@ -39,7 +39,8 @@ void UStartScreenUserWidget::NativeConstruct()
 		TargetActor->SetActorHiddenInGame(true);
 		TargetActor->SetActorEnableCollision(false);
 		TargetActor->SetActorTickEnabled(false);
-		UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(TargetActor->GetComponentByClass(UPrimitiveComponent::StaticClass()));
+		UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(
+			TargetActor->GetComponentByClass(UPrimitiveComponent::StaticClass()));
 		PrimComp->SetSimulatePhysics(false);
 
 		TargetActor = FoundVehicleActors[0];
@@ -55,7 +56,7 @@ void UStartScreenUserWidget::NativeConstruct()
 
 void UStartScreenUserWidget::OnNextSelected()
 {
-	UE_LOG(LogTemp, Display, TEXT("OnNextSelected: %d"), CurrIndx);
+	// UE_LOG(LogTemp, Display, TEXT("OnNextSelected: %d"), CurrIndx);
 
 	if (FoundVehicleActors.Num() == 0)
 	{
@@ -63,21 +64,22 @@ void UStartScreenUserWidget::OnNextSelected()
 	}
 
 	NextButton->SetRenderScale(FVector2D(0.9f, 0.9f));
-	
+
 	if (FoundVehicleActors.Num() > 1)
 	{
 		int NewIndx = 1 - CurrIndx;
 		AActor* TargetActor = FoundVehicleActors[NewIndx];
-	
-		UE_LOG(LogTemp, Display, TEXT("Target Actor: %s"), *TargetActor->GetName());
+
+		// UE_LOG(LogTemp, Display, TEXT("Target Actor: %s"), *TargetActor->GetName());
 
 		AActor* UsedActor = FoundVehicleActors[CurrIndx];
 		TargetActor->SetActorHiddenInGame(false);
 		TargetActor->SetActorEnableCollision(true);
 		TargetActor->SetActorTickEnabled(true);
-		UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(TargetActor->GetComponentByClass(UPrimitiveComponent::StaticClass()));
+		UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(
+			TargetActor->GetComponentByClass(UPrimitiveComponent::StaticClass()));
 		PrimComp->SetSimulatePhysics(true);
-		
+
 		UsedActor->SetActorHiddenInGame(true);
 		UsedActor->SetActorEnableCollision(false);
 		UsedActor->SetActorTickEnabled(false);
@@ -89,12 +91,12 @@ void UStartScreenUserWidget::OnNextSelected()
 	}
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle,[this]()
-		{
-			NextButton->SetRenderScale(FVector2D(1.0f, 1.0f));
-		},
-		0.1f,
-		false
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+	                                       {
+		                                       NextButton->SetRenderScale(FVector2D(1.0f, 1.0f));
+	                                       },
+	                                       0.1f,
+	                                       false
 	);
 }
 
@@ -124,10 +126,10 @@ void UStartScreenUserWidget::OnButtonUnHovered()
 
 void UStartScreenUserWidget::OnStartGameSelected()
 {
-	UE_LOG(LogTemp, Display, TEXT("OnStartGameSelected"));
-	
+	// UE_LOG(LogTemp, Display, TEXT("OnStartGameSelected"));
+
 	AActor* UsedActor = FoundVehicleActors[CurrIndx];
-	
+
 	if (UsedActor->Tags.Contains(FName("Truck")))
 	{
 		UGameplayStatics::OpenLevel(GetWorld(), FName("TruckDrive"));

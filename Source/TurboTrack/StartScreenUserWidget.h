@@ -9,13 +9,13 @@ UCLASS()
 class TURBOTRACK_API UStartScreenUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* NextButton;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* StartGameButton;
-	
+
 
 	UFUNCTION()
 	void OnNextSelected();
@@ -38,7 +38,7 @@ private:
 
 	FSlateColor NextBtnInitialColor;
 	FSlateColor StartBtnInitialColor;
-	
+
 	class UTextBlock* NextBtnTextBlock;
 	UTextBlock* StartBtnTextBlock;
 };

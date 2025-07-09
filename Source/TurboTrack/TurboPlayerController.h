@@ -21,5 +21,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> CarSelectWidgetClass;
-	
 };
