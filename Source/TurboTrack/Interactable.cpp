@@ -1,6 +1,7 @@
 #include "Interactable.h"
 
 #include "PlayerPawn.h"
+#include "Kismet/GameplayStatics.h"
 
 AInteractable::AInteractable()
 {
@@ -35,6 +36,12 @@ void AInteractable::BeginPlay()
 		MeshComponent->SetNotifyRigidBodyCollision(true);
 		MeshComponent->OnComponentHit.AddDynamic(this, &AInteractable::OnComponentHit);
 	}
+	else if (MeshComponent && PickupType == EPickupType::Hammer)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("Listening to HammerHit"));
+		MeshComponent->SetNotifyRigidBodyCollision(true);
+		MeshComponent->OnComponentHit.AddDynamic(this, &AInteractable::OnHammerHit);
+	}
 
 	// if (!MeshComponent)
 	// {
@@ -50,7 +57,8 @@ void AInteractable::OnMeshOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                   const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("On Super Nitro Overlap"));
+	// UE_LOG(LogTemp, Warning, TEXT("On Super Nitro Overlap"));
+	UGameplayStatics::PlaySound2D(this, NitroSoundCue, 0.3);
 	OnSuperNitroPickupOverlap.Broadcast();
 
 	Destroy();
@@ -61,8 +69,15 @@ void AInteractable::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
 	if (OtherActor && OtherActor->IsA(APlayerPawn::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("On Trash Hit"));
+		// UE_LOG(LogTemp, Warning, TEXT("On Trash Hit"));
+		UGameplayStatics::PlaySound2D(this, TrashSoundCue);
 		OnTrashPickupHit.Broadcast();
 		MeshComponent->OnComponentHit.RemoveDynamic(this, &AInteractable::OnComponentHit);
 	}
+}
+
+void AInteractable::OnHammerHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	UGameplayStatics::PlaySound2D(this, HammerSoundCue);
 }

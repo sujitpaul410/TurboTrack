@@ -41,4 +41,8 @@ private:
 
 	class UTextBlock* NextBtnTextBlock;
 	UTextBlock* StartBtnTextBlock;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* ClickSoundCue;
 };

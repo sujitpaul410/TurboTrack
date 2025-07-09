@@ -120,4 +120,6 @@ private:
 	bool HasGameStarted = false;
 
 	bool IsOnSuperNitro = false;
+
+	void OnSuperNitroEnd();
 };

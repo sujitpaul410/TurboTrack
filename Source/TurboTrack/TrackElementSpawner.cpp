@@ -61,7 +61,8 @@ void ATrackElementSpawner::SpawnNonTrackTypeElement()
 	case 3:
 		// UE_LOG(LogTemp, Display, TEXT("Spawning  Super Nitro"));
 		SpawnHitableElement(SuperNitro, SuperNitroBlueprint, SuperNitroZOffset, true);
-		SuperNitro->OnSuperNitroPickupOverlap.AddDynamic(PlayerPawn, &APlayerPawn::OnSuperNitro);
+		if (SuperNitro)
+			SuperNitro->OnSuperNitroPickupOverlap.AddDynamic(PlayerPawn, &APlayerPawn::OnSuperNitro);
 		break;
 
 	case 4:
@@ -145,6 +146,7 @@ void ATrackElementSpawner::SpawnLazyTrack()
 	{
 		Obstacle->OnLazySplineOverlap.RemoveDynamic(PlayerPawn, &APlayerPawn::OnLazy);
 		Obstacle->OnLazySplineOverlapEnd.RemoveDynamic(PlayerPawn, &APlayerPawn::OnLazyEnd);
+		PlayerPawn->OnLazyEnd();
 		Obstacle->Destroy();
 	}
 	Obstacle = GetWorld()->SpawnActor<ATrackObstacle>(ObstacleClass, MidLoc, FRotator::ZeroRotator, SpawnParams);

@@ -8,7 +8,8 @@ UENUM(BlueprintType)
 enum class EPickupType : uint8
 {
 	Trash UMETA(DisplayName = "Trash"),
-	Nitro UMETA(DisplayName = "Nitro")
+	Nitro UMETA(DisplayName = "Nitro"),
+	Hammer UMETA(DisplayName = "Hammer")
 };
 
 UCLASS()
@@ -31,6 +32,16 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FPickupOverlapSignature OnTrashPickupHit;
 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* HammerSoundCue;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* TrashSoundCue;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* NitroSoundCue;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -40,6 +51,13 @@ protected:
 	                           bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+	                    UPrimitiveComponent* OtherComp,
+	                    FVector NormalImpulse,
+	                    const FHitResult& Hit
+	);
+	
+	UFUNCTION()
+	void OnHammerHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	                    UPrimitiveComponent* OtherComp,
 	                    FVector NormalImpulse,
 	                    const FHitResult& Hit

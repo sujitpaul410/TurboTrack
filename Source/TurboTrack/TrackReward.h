@@ -31,4 +31,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnNitroSplineOverlapSignature OnNitroSplineOverlapEnd;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* PushSoundCue;
 };

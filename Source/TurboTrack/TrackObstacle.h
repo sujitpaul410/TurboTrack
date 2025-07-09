@@ -31,4 +31,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnLazySplineOverlapSignature OnLazySplineOverlapEnd;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* PullSoundCue;
 };

@@ -1,6 +1,7 @@
 #include "TrackReward.h"
 
 #include "PlayerPawn.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ATrackReward::ATrackReward()
@@ -21,6 +22,7 @@ void ATrackReward::OnMeshOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (OtherActor && OtherActor->IsA(APlayerPawn::StaticClass()))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Player overlapping nitro mesh!"));
+		UGameplayStatics::PlaySound2D(this, PushSoundCue, 0.2);
 		TotalOverlapped++;
 		OnNitroSplineOverlap.Broadcast();
 	}

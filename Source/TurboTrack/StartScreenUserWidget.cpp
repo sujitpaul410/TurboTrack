@@ -58,6 +58,8 @@ void UStartScreenUserWidget::OnNextSelected()
 {
 	// UE_LOG(LogTemp, Display, TEXT("OnNextSelected: %d"), CurrIndx);
 
+	UGameplayStatics::PlaySound2D(this, ClickSoundCue);
+	
 	if (FoundVehicleActors.Num() == 0)
 	{
 		return;
@@ -127,6 +129,8 @@ void UStartScreenUserWidget::OnButtonUnHovered()
 void UStartScreenUserWidget::OnStartGameSelected()
 {
 	// UE_LOG(LogTemp, Display, TEXT("OnStartGameSelected"));
+	
+	UGameplayStatics::PlaySound2D(this, ClickSoundCue);
 
 	AActor* UsedActor = FoundVehicleActors[CurrIndx];
 

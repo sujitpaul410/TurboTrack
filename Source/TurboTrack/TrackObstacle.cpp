@@ -1,6 +1,7 @@
 #include "TrackObstacle.h"
 
 #include "PlayerPawn.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ATrackObstacle::ATrackObstacle()
@@ -20,6 +21,7 @@ void ATrackObstacle::OnMeshOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
 	if (OtherActor && OtherActor->IsA(APlayerPawn::StaticClass()))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("Player overlapping Lazy mesh!"));
+		UGameplayStatics::PlaySound2D(this, PullSoundCue, 0.2);
 		TotalOverlapped++;
 		OnLazySplineOverlap.Broadcast();
 	}

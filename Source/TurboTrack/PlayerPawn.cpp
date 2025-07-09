@@ -215,6 +215,20 @@ void APlayerPawn::Steer(float InputVal)
 	BoxComponent->AddTorqueInRadians(Torque);
 }
 
+void APlayerPawn::OnSuperNitroEnd()
+{
+	NitroValue = 1;
+	IsOnSuperNitro = false;
+	if (!SpeedLines)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("No Speed lines"));
+	}
+	else
+	{
+		SpeedLines->DeactivateImmediate();
+	}
+}
+
 
 void APlayerPawn::OnNitro()
 {
@@ -285,5 +299,8 @@ void APlayerPawn::OnSuperNitro()
 		{
 			SpeedLines->Activate(true);
 		}
+
+		FTimerHandle SuperNitroTimer;
+		GetWorld()->GetTimerManager().SetTimer(SuperNitroTimer, this, &APlayerPawn::OnSuperNitroEnd, 14.0f, false);
 	}
 }
