@@ -1,6 +1,8 @@
 #include "Interactable.h"
 
+#include "MainScreenUserWidget.h"
 #include "PlayerPawn.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 AInteractable::AInteractable()
@@ -73,6 +75,18 @@ void AInteractable::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 		UGameplayStatics::PlaySound2D(this, TrashSoundCue);
 		OnTrashPickupHit.Broadcast();
 		MeshComponent->OnComponentHit.RemoveDynamic(this, &AInteractable::OnComponentHit);
+	
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UMainScreenUserWidget::StaticClass(), false);
+
+		if (FoundWidgets.Num() > 0)
+		{
+			UMainScreenUserWidget* Found = Cast<UMainScreenUserWidget>(FoundWidgets[0]);
+			if (Found)
+			{
+				Found->OnObstacleHit();
+			}
+		}
 	}
 }
 

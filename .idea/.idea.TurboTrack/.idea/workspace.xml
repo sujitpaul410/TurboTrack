@@ -27,6 +27,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/DebugGarbageCollectionGraph.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Components/WidgetComponent.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/TurboTrack/Interactable.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/TurboTrack/Interactable.h" root0="FORCE_HIGHLIGHTING" />
@@ -232,6 +233,9 @@
       <workItem from="1752044249214" duration="4027000" />
       <workItem from="1752062671380" duration="5982000" />
       <workItem from="1752130505925" duration="2225000" />
+      <workItem from="1752137408338" duration="428000" />
+      <workItem from="1752140679239" duration="381000" />
+      <workItem from="1752146849245" duration="8600000" />
     </task>
     <servers />
   </component>
