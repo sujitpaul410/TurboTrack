@@ -7,6 +7,7 @@ player's movement and position, creating a fresh, endless racing challenge every
 
 - **Procedural Tracks**: Roads are generated dynamically as you drive, creating an endless loop of unpredictability and
   reflex-based fun.
+  - **Arcade-Style Vehicle Physics**: Enjoy tight, responsive controls and exaggerated physics that make every drift, jump, and collision a thrill.
 - **Boosters & Penalties**: Drive over boost pads to gain speed, or watch out for penalty zones that slow you down or
   throw you off course.
 - **Minimalist Design**: Focused on gameplay and flow. Clean visuals with sharp feedback.
